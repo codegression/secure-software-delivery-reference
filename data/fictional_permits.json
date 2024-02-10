@@ -1,0 +1,18 @@
+{
+  "provenance": {"type": "synthetic", "organization": "Mosslight Conservation", "created": "2026-09-16", "purpose": "Fictional field specimen permit workflow; no actual collection authority, sensitive coordinates or personal data.", "license": "CC0-1.0", "seed": "Hand-authored fixed fixture, version 1"},
+  "users": [
+    {"id": 1, "username": "alba", "name": "Alba Finch", "tenant": "fern-coast", "role": "submitter"},
+    {"id": 2, "username": "bram", "name": "Bram Alder", "tenant": "fern-coast", "role": "submitter"},
+    {"id": 3, "username": "mira", "name": "Mira Reed", "tenant": "fern-coast", "role": "reviewer"},
+    {"id": 4, "username": "nico", "name": "Nico Vale", "tenant": "high-marsh", "role": "reviewer"}
+  ],
+  "permits": [
+    {"id": 101, "tenant": "fern-coast", "owner_id": 1, "species": "Fern community survey", "location": "North woodland · Plot F-12", "purpose": "Non-destructive frond photography for the seasonal habitat register.", "status": "pending", "submitted": "2026-09-10T08:30:00Z"},
+    {"id": 102, "tenant": "fern-coast", "owner_id": 2, "species": "Lichen reference sample", "location": "Coastal grove · Plot C-07", "purpose": "Collect one small fallen fragment for microscopy training.", "status": "pending", "submitted": "2026-09-11T09:15:00Z"},
+    {"id": 103, "tenant": "fern-coast", "owner_id": 1, "species": "Willow leaf impressions", "location": "Estuary edge · Plot E-04", "purpose": "Use fallen leaves to document seasonal changes in leaf morphology.", "status": "approved", "submitted": "2026-09-08T13:10:00Z", "reviewed_by": 3, "review_note": "Approved for fallen material only; retain photographic provenance."},
+    {"id": 104, "tenant": "fern-coast", "owner_id": 2, "species": "Moss quadrat images", "location": "Stonebridge · Plot S-03", "purpose": "Repeat the fixed-view photographic survey with no material removed.", "status": "approved", "submitted": "2026-09-07T10:45:00Z", "reviewed_by": 3, "review_note": "Approved for photography only; use existing footpaths."},
+    {"id": 105, "tenant": "fern-coast", "owner_id": 2, "species": "Wetland seed collection", "location": "South reedbed · Plot R-09", "purpose": "Collect seed heads for an educational field display.", "status": "rejected", "submitted": "2026-09-06T11:30:00Z", "reviewed_by": 3, "review_note": "Habitat disturbance outweighs the benefit; use an image-based display."},
+    {"id": 106, "tenant": "fern-coast", "owner_id": 3, "species": "Oak canopy observation", "location": "North woodland · Plot F-20", "purpose": "Record canopy coverage from the established observation path.", "status": "pending", "submitted": "2026-09-12T14:00:00Z"},
+    {"id": 201, "tenant": "high-marsh", "owner_id": 4, "species": "Reed stem cross-sections", "location": "Upper marsh · Plot U-02", "purpose": "Inspect naturally fallen stems to document structural variation.", "status": "pending", "submitted": "2026-09-12T09:00:00Z"}
+  ]
+}

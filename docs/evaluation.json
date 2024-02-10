@@ -1,0 +1,117 @@
+{
+  "method": "Real loopback HTTP requests against a fresh SQLite fixture per test; concurrent review uses two independent HTTP connections.",
+  "dataset": "data/fictional_permits.json",
+  "tests_run": 25,
+  "passed": 25,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "observations": [
+    {
+      "test": "test_api.APIControls.test_audit_scoped_and_forbidden_to_submitter",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_authenticated_writes_reject_cross_origin_and_fetch_site",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_authentication_requires_valid_credentials",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_cross_tenant_mutation_denied",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_duplicate_and_concurrent_review_have_one_winner",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_expired_session_denied",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_host_rebinding_rejected",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_invalid_json_duplicate_fields_and_body_limits",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_login_rate_limit_reached",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_login_requires_exact_origin",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_logout_revokes_session",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_mass_assignment_rejected_and_tenant_set_server_side",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_missing_and_wrong_csrf_rejected_without_change",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_password_hashes_use_random_salts_and_work_factor",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_relogin_rotates_and_invalidates_previous_cookie",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_review_writes_decision_and_audit_atomically",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_reviewer_can_see_same_tenant_only",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_reviewer_cannot_approve_own_proposal",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_script_payload_is_data_and_not_reflected_as_html",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_session_cookie_and_browser_response_policy",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_session_secret_hashed_in_database",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_sql_injection_login_does_not_authenticate",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_static_route_whitelist_blocks_database_and_traversal",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_submitter_cannot_review",
+      "outcome": "pass"
+    },
+    {
+      "test": "test_api.APIControls.test_submitter_only_sees_own_objects",
+      "outcome": "pass"
+    }
+  ],
+  "limitations": [
+    "Passing scenarios are evidence for the stated assertions, not a vulnerability prevalence or universal security-coverage estimate.",
+    "The XSS check verifies JSON content type, CSP and rendering sink convention; browser exploit execution is outside this suite.",
+    "No TLS, public deployment, live CVE feed, independent penetration test, accessibility audit or sustained load test was performed.",
+    "Rate limiting and concurrent review cover bounded lab cases only; process-local rate state resets on restart."
+  ]
+}

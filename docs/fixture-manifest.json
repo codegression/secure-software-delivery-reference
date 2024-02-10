@@ -1,0 +1,8 @@
+{
+  "fixture": "data/fictional_permits.json",
+  "sha256": "e5c6ba1e49083d5b8596a5f48fc22333ddc28c567da3f9697bac0c03d34f27cc",
+  "users": 4,
+  "tenants": 2,
+  "permits": 7,
+  "origin": "Original fictional fixture; CC0-1.0"
+}

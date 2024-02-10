@@ -1,0 +1,527 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mosslight Fieldbook loopback API",
+    "version": "1.0.0",
+    "description": "Local fictional-lab API. HTTP only; not a public production service. JSON request body maximum 16384 bytes. No query parameters supported. Static app routes are outside this contract."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8767"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "moss_session",
+        "description": "Opaque 256-bit random token. HttpOnly, SameSite=Strict, 1800-second lifetime. Secure intentionally absent in loopback HTTP lab."
+      }
+    }
+  },
+  "paths": {
+    "/api/login": {
+      "post": {
+        "summary": "Create a fresh session",
+        "description": "Known local lab account. Origin validation is required even without a session. Returns csrf and sets the cookie.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Successful JSON result"
+          },
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          },
+          "411": {
+            "description": "Exactly one Content-Length required"
+          },
+          "413": {
+            "description": "Body exceeds 16384 bytes"
+          },
+          "415": {
+            "description": "Content-Type must be application/json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must match http://127.0.0.1:<actual-port> exactly."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/session": {
+      "get": {
+        "summary": "Read current identity, CSRF token and absolute expiry",
+        "description": "Any authenticated user. Returns {user:{id,username,name,tenant,role},csrf,expires}.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON result"
+          },
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "summary": "Revoke current session",
+        "description": "Any authenticated user. Clears cookie; returns {ok:true}.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON result"
+          },
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          },
+          "411": {
+            "description": "Exactly one Content-Length required"
+          },
+          "413": {
+            "description": "Body exceeds 16384 bytes"
+          },
+          "415": {
+            "description": "Content-Type must be application/json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must match http://127.0.0.1:<actual-port> exactly."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token returned by login or current session."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/permits": {
+      "get": {
+        "summary": "List visible permits",
+        "description": "Reviewer: own tenant. Submitter: own tenant AND owner. Returns {permits:[...]}, descending ID, maximum 500. No pagination.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON result"
+          },
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create pending proposal",
+        "description": "Any authenticated user. Owner and tenant come from session; status is pending. Returns {id}.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          },
+          "411": {
+            "description": "Exactly one Content-Length required"
+          },
+          "413": {
+            "description": "Body exceeds 16384 bytes"
+          },
+          "415": {
+            "description": "Content-Type must be application/json"
+          },
+          "201": {
+            "description": "Created; JSON {id: integer}"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must match http://127.0.0.1:<actual-port> exactly."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token returned by login or current session."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "species",
+                  "location",
+                  "purpose"
+                ],
+                "properties": {
+                  "species": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 120
+                  },
+                  "location": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 120
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "minLength": 15,
+                    "maxLength": 1500
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/permits/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 999999999
+          }
+        }
+      ],
+      "get": {
+        "summary": "Read one visible permit",
+        "description": "Same visibility policy as list; inaccessible ID returns 404. Returns {permit:{id,tenant,owner_id,species,location,purpose,status,submitted,reviewed_by,review_note,version}}.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON result"
+          },
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          }
+        }
+      }
+    },
+    "/api/permits/{id}/review": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 999999999
+          }
+        }
+      ],
+      "post": {
+        "summary": "Make a final decision on pending work",
+        "description": "Reviewer in same tenant AND not the proposal owner. Decision and audit commit together. Returns {ok:true}.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON result"
+          },
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          },
+          "411": {
+            "description": "Exactly one Content-Length required"
+          },
+          "413": {
+            "description": "Body exceeds 16384 bytes"
+          },
+          "415": {
+            "description": "Content-Type must be application/json"
+          },
+          "409": {
+            "description": "Already reviewed; concurrent or repeated decision rejected"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must match http://127.0.0.1:<actual-port> exactly."
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token returned by login or current session."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decision",
+                  "note"
+                ],
+                "properties": {
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "approved",
+                      "rejected"
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audit": {
+      "get": {
+        "summary": "List team audit events",
+        "description": "Reviewer only; same tenant, newest 100. Returns {events:[{id,created,tenant,actor_id,action,object_id,detail}]}. Successful state actions only; denied requests are not stored.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON result"
+          },
+          "400": {
+            "description": "Unrecognized Host, path, fields or malformed input"
+          },
+          "401": {
+            "description": "Missing, invalid or expired credentials"
+          },
+          "403": {
+            "description": "Origin, CSRF, role or independent-review policy denied"
+          },
+          "404": {
+            "description": "Unknown or inaccessible record"
+          },
+          "429": {
+            "description": "Rate window exhausted"
+          },
+          "503": {
+            "description": "Database or local I/O unavailable"
+          }
+        }
+      }
+    }
+  }
+}

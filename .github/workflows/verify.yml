@@ -1,0 +1,28 @@
+name: Verify and package Fieldbook
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+concurrency:
+  group: fieldbook-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python: ['3.10', '3.12', '3.14']
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Exercise real HTTP controls, build evidence and package source
+        run: python run.py package
+      - name: Require committed evidence to match current checks
+        run: git diff --exit-code -- docs/evaluation.json docs/control-report.md docs/index.html docs/fixture-manifest.json
+      - name: Verify source archive checksum and excluded runtime state
+        run: |
+          python -c "import hashlib,pathlib,zipfile; p=pathlib.Path('dist/mosslight-fieldbook-source.zip'); expected=pathlib.Path('dist/SHA256SUMS').read_text().split()[0]; assert hashlib.sha256(p.read_bytes()).hexdigest()==expected; z=zipfile.ZipFile(p); assert all('/var/' not in n and not n.endswith('.sqlite') and 'credentials.txt' not in n for n in z.namelist()); print('Source artifact digest and exclusions verified')"
